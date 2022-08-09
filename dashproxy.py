@@ -127,11 +127,10 @@ class DashProxy(HasLogger):
         self.downloaders = {}
 
     def run(self):
-        logger.log(
-            logging.INFO,
-            "Running dash proxy for stream %s. Output goes in %s"
-            % (self.mpd, self.output_dir),
-        )
+        logger.log( logging.INFO,
+            "Running dash proxy for stream %s. Output goes in %s" % (
+                self.mpd, self.output_dir ) 
+            )
         self.refresh_mpd()
 
     def refresh_mpd(self, after=0):
@@ -159,9 +158,7 @@ class DashProxy(HasLogger):
             base_url = baseUrl(location.text)
         baseUrlNode = mpd.find("mpd:BaseUrl", ns)
         if baseUrlNode:
-            if baseUrlNode.text.startswith("http://") or baseUrlNode.text.startswith(
-                "https://"
-            ):
+            if baseUrlNode.text.startswith("http://") or baseUrlNode.text.startswith("https://"):
                 base_url = baseUrl(baseUrlNode.text)
             else:
                 base_url = base_url + baseUrlNode.text
@@ -176,16 +173,12 @@ class DashProxy(HasLogger):
             logging.VERBOSE, "Found %d periods choosing the 1st one" % (len(periods),)
         )
         period = periods[0]
-        for as_idx, adaptation_set in enumerate(
-            period.findall("mpd:AdaptationSet", ns)
-        ):  
-            for rep_idx, representation in enumerate(
-                adaptation_set.findall("mpd:Representation", ns)
-            ):
-                self.verbose(
-                    "Found representation with id %s"
-                    % (representation.attrib.get("id", "UKN"),)
-                )
+        adaptation_set_list = period.findall("mpd:AdaptationSet",ns)
+        for as_idx, adaptation_set in enumerate( period.findall("mpd:AdaptationSet", ns) ):
+            adaptation_set_base_urls = adaptation_set.findall("mpd:BaseURL", ns)
+            for rep_idx, representation in enumerate( adaptation_set.findall("mpd:Representation", ns) ):
+                representation_base_urls = representation.findall("mpd:BaseURL", ns)
+                self.verbose( "Found representation with id %s"  % (representation.attrib.get("id", "UKN"),) )
                 rep_addr = RepAddr(0, as_idx, rep_idx)
                 self.ensure_downloader(mpd, rep_addr)
 
@@ -303,8 +296,7 @@ class DashDownloader(HasLogger):
     def render_template(self, template, representation=None, segment=None):
         template = template.replace("$RepresentationID$", "{representation_id}")
         template = template.replace("$Time$", "{time}")
-        template = template.replace(
-            "$Number%05d$", "{number}"
+        template = template.replace("$Number%04d$", "{number}"
         )  # TODO printf format width: %0[width]d (ISO/IEC 23009-1:2014(E))
 
         args = {}
