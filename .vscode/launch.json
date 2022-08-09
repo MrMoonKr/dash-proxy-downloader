@@ -2,6 +2,18 @@
   "version": "0.2.0",
   "configurations": [
     {
+        "name": "Python: 테스트",
+        "type": "python",
+        "request": "launch",
+        "program": "${file}",
+        "console": "integratedTerminal",
+        "args": [
+          "https://assets.8i.com/8IPROMOEXPERIENCE20210204_S02_T01_20210205_141236/manifest.mpd",
+          "-o",
+          "out"
+        ]
+    },
+    {
       "name": "Python: Current File",
       "type": "python",
       "request": "launch",
